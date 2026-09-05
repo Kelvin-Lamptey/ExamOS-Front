@@ -7,6 +7,7 @@ import { examsOptions, queryClient, useSystemStatus } from '../state/queries'
 import { ExamCard } from '../components/ExamCard'
 import { ErrorState, LoadingState } from '../components/Feedback'
 import { SyncIndicator } from '../components/SyncIndicator'
+import { Utilities } from '../utilities/Utilities'
 
 export function HomePage() {
   const student = useStudent()
@@ -37,7 +38,7 @@ export function HomePage() {
         <div className="filter-tabs mt-5" role="group" aria-label="Filter exams">{(['all', 'active', 'submitted'] as const).map(value => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === 'all' ? 'All exams' : value === 'active' ? 'Ready & in progress' : 'Submitted'}</button>)}</div>
         {exams.isPending ? <LoadingState label="Finding today’s exams…" /> : exams.isError ? <ErrorState error={exams.error} retry={() => void exams.refetch()} /> : visible?.length ? <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{visible.map(exam => <ExamCard key={exam.id} exam={exam} />)}</div> : <div className="panel mt-6 p-12 text-center"><p className="font-medium">{filter === 'submitted' ? 'No submissions yet.' : filter === 'active' ? 'Nothing ready to start right now.' : 'No exams scheduled for today.'}</p><p className="mt-2 text-sm text-muted">{filter === 'submitted' ? 'Your completed exams will appear here.' : 'Refresh to check for updates, or ask your invigilator.'}</p></div>}
       </section>
-      <div id="home-utilities" className="mt-8" />
+      <section className="mt-8"><Utilities allowed={['calculator', 'scratchpad']} scope="workspace" /></section>
       <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5 text-[10px] text-muted"><span>SMARTSCRIPT EXAM OS <span className="mx-2 text-line">/</span> A KenolTech product</span><SyncIndicator /></footer>
     </div>
   )

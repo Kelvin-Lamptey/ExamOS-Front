@@ -14,6 +14,7 @@ import { SaveIndicator, SyncIndicator } from '../components/SyncIndicator'
 import { QuestionRenderer } from '../questions/QuestionRenderer'
 import { Modal } from '../components/Modal'
 import { LoginForm } from '../components/LoginForm'
+import { Utilities } from '../utilities/Utilities'
 
 const questionLabels = { mcq: 'Multiple choice', short_text: 'Short answer', long_text: 'Written answer', number: 'Numeric answer', code: 'Code question' }
 
@@ -96,7 +97,7 @@ function ExamWorkspace({ exam }: { exam: ExamPackage }) {
   return <>
     <div className="runner-topbar"><div className="min-w-0"><Link className="back-link text-[11px]" to="/"><ArrowLeft className="size-3.5" />My exams</Link><div className="mt-3 flex min-w-0 items-center gap-3"><span className="shrink-0 rounded-md border border-line bg-raised px-2 py-1 font-mono text-[10px] text-accent">{exam.course_code ?? 'EXAM'}</span><h1 className="truncate text-sm font-medium">{exam.title}</h1></div></div><ExamTimer expiresAt={exam.attempt!.expires_at} serverTime={exam.server_time} onExpire={onExpire} /></div>
     <div className="exam-layout">
-      <aside className="exam-sidebar"><QuestionNav questions={questions} answers={snapshot.answers} current={index} flagged={flagged} onSelect={next => void selectQuestion(next)} disabled={switching || snapshot.submitting || snapshot.submissionUncertain} /><div className="mt-8 border-t border-line pt-6" id="runner-utilities" /><div className="mt-auto pt-8"><div className="rounded-xl border border-line bg-ink/70 p-4"><ShieldCheck className="mb-2 size-4 text-accent" /><p className="text-xs leading-relaxed text-muted">You focus on your answers.<br />We’ll keep them saved.</p><div className="mt-4"><SyncIndicator compact /></div></div></div></aside>
+      <aside className="exam-sidebar"><QuestionNav questions={questions} answers={snapshot.answers} current={index} flagged={flagged} onSelect={next => void selectQuestion(next)} disabled={switching || snapshot.submitting || snapshot.submissionUncertain} /><div className="mt-8 border-t border-line pt-6"><Utilities allowed={exam.allowed_utilities} scope={exam.id} compact disabled={frozen} /></div><div className="mt-auto pt-8"><div className="rounded-xl border border-line bg-ink/70 p-4"><ShieldCheck className="mb-2 size-4 text-accent" /><p className="text-xs leading-relaxed text-muted">You focus on your answers.<br />We’ll keep them saved.</p><div className="mt-4"><SyncIndicator compact /></div></div></div></aside>
       <section className="question-workspace" aria-label="Current question">
         {sessionExpired && <div className="error-panel mb-5"><p className="flex-1 text-sm">Your session has expired. Sign in again to save your current work.</p><button className="button button-small button-secondary" onClick={() => setReauth(true)}>Sign in again</button></div>}
         {snapshot.error && !sessionExpired && <div className="mb-5"><ErrorState title="Your latest changes need saving" error={new Error(snapshot.error)} retry={() => { void controller.flush().then(() => { setNavigationError(null); if (blocker.state === 'blocked') blocker.proceed() }).catch(() => undefined) }} /></div>}
