@@ -1,14 +1,34 @@
 import { z } from 'zod'
 
-export const SyncStateSchema = z.enum(['synced', 'queued', 'syncing', 'offline', 'error'])
+export const SyncStateSchema = z.enum([
+  'synced',
+  'queued',
+  'syncing',
+  'offline',
+  'error',
+])
 export type SyncState = z.infer<typeof SyncStateSchema>
-export const ExamStatusSchema = z.enum(['upcoming', 'available', 'in_progress', 'submitted', 'closed'])
-export const QuestionTypeSchema = z.enum(['mcq', 'short_text', 'long_text', 'number', 'code'])
+export const ExamStatusSchema = z.enum([
+  'upcoming',
+  'available',
+  'in_progress',
+  'submitted',
+  'closed',
+])
+export const QuestionTypeSchema = z.enum([
+  'mcq',
+  'short_text',
+  'long_text',
+  'number',
+  'code',
+])
 export type QuestionType = z.infer<typeof QuestionTypeSchema>
 
 export const LoginRequestSchema = z.object({
   student_id: z.string().trim().min(1).max(100),
-  access_code: z.string().regex(/^[A-Za-z0-9]{4}$/, 'Enter exactly 4 letters or numbers.'),
+  access_code: z
+    .string()
+    .regex(/^[A-Za-z0-9]{4}$/, 'Enter exactly 4 letters or numbers.'),
 })
 export type LoginRequest = z.infer<typeof LoginRequestSchema>
 
@@ -50,10 +70,20 @@ export const QuestionSchema = z.object({
 export type Question = z.infer<typeof QuestionSchema>
 
 export const AnswerResponseSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('mcq'), selected_option_ids: z.array(z.string()).max(1) }),
+  z.object({
+    type: z.literal('mcq'),
+    selected_option_ids: z.array(z.string()).max(1),
+  }),
   z.object({ type: z.literal('text'), value: z.string().max(100_000) }),
-  z.object({ type: z.literal('number'), value: z.number().finite().nullable() }),
-  z.object({ type: z.literal('code'), language: z.string(), source: z.string().max(100_000) }),
+  z.object({
+    type: z.literal('number'),
+    value: z.number().finite().nullable(),
+  }),
+  z.object({
+    type: z.literal('code'),
+    language: z.string(),
+    source: z.string().max(100_000),
+  }),
 ])
 export type AnswerResponse = z.infer<typeof AnswerResponseSchema>
 export const AnswerSaveRequestSchema = z.object({
@@ -70,7 +100,9 @@ export const AnswerAcknowledgementSchema = z.object({
   sync_state: SyncStateSchema,
 })
 export type AnswerAcknowledgement = z.infer<typeof AnswerAcknowledgementSchema>
-export const SavedAnswerSchema = AnswerAcknowledgementSchema.extend({ response: AnswerResponseSchema })
+export const SavedAnswerSchema = AnswerAcknowledgementSchema.extend({
+  response: AnswerResponseSchema,
+})
 export type SavedAnswer = z.infer<typeof SavedAnswerSchema>
 
 export const AttemptSchema = z.object({

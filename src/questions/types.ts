@@ -5,5 +5,8 @@ export interface QuestionProps {
   question: Question
   draft: DraftAnswer
   disabled: boolean
-  onChange: (response: AnswerResponse, numeric?: { raw: string; error: string | null }) => void
+  onChange: (
+    response: AnswerResponse,
+    numeric?: { raw: string; error: string | null },
+  ) => void
 }

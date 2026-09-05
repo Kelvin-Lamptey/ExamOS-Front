@@ -6,9 +6,14 @@ import type { QuestionProps } from './types'
 
 export function QuestionRenderer(props: QuestionProps) {
   switch (props.question.type) {
-    case 'mcq': return <McqQuestion {...props} />
-    case 'short_text': case 'long_text': return <TextQuestion {...props} />
-    case 'number': return <NumberQuestion {...props} />
-    case 'code': return <CodeQuestion {...props} />
+    case 'mcq':
+      return <McqQuestion {...props} />
+    case 'short_text':
+    case 'long_text':
+      return <TextQuestion {...props} />
+    case 'number':
+      return <NumberQuestion {...props} />
+    case 'code':
+      return <CodeQuestion {...props} />
   }
 }

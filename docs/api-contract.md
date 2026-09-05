@@ -22,14 +22,16 @@ GET `/exams/{id}` adds these fields to the supplied package:
   "starts_at": "2026-09-05T00:00:00Z",
   "ends_at": "2026-09-05T23:59:59Z",
   "server_time": "2026-09-05T10:00:05Z",
-  "answers": [{
-    "question_id": "q2",
-    "revision": 7,
-    "response": { "type": "text", "value": "Cohesion describes..." },
-    "local_saved": true,
-    "local_saved_at": "2026-09-05T10:00:03Z",
-    "sync_state": "queued"
-  }],
+  "answers": [
+    {
+      "question_id": "q2",
+      "revision": 7,
+      "response": { "type": "text", "value": "Cohesion describes..." },
+      "local_saved": true,
+      "local_saved_at": "2026-09-05T10:00:03Z",
+      "sync_state": "queued"
+    }
+  ],
   "attempt": {
     "started_at": "2026-09-05T10:00:00Z",
     "expires_at": "2026-09-05T12:00:00Z",
