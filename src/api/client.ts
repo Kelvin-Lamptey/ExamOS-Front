@@ -9,6 +9,12 @@ import { getSessionToken, setSessionToken } from '../state/session'
 
 export const API_BASE_URL = 'http://127.0.0.1:43100/v1'
 
+const expiryListeners = new Set<() => void>()
+export function onSessionExpired(listener: () => void) {
+  expiryListeners.add(listener)
+  return () => { expiryListeners.delete(listener) }
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly code: string,
@@ -45,6 +51,9 @@ async function request<T>(path: string, schema: z.ZodType<T>, options: RequestOp
     })
     const payload: unknown = response.status === 204 ? null : await response.json().catch(() => null)
     if (!response.ok) {
+      if (response.status === 401 && path !== '/auth/login' && path !== '/session') {
+        for (const listener of expiryListeners) listener()
+      }
       const parsed = ApiErrorBodySchema.safeParse(payload)
       const error = parsed.success ? parsed.data.error : undefined
       throw new ApiError(

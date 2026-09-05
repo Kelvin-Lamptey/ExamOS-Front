@@ -1,12 +1,14 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Navigate, Outlet } from 'react-router'
-import { api } from '../api/client'
+import { api, onSessionExpired } from '../api/client'
 import type { Health, Session } from '../api/contracts'
-import { sessionOptions } from '../state/queries'
+import { queryClient, sessionOptions } from '../state/queries'
 import { Brand } from '../components/Brand'
 import { ErrorState, LoadingState } from '../components/Feedback'
 import { ArrowRight, LoaderCircle, RefreshCw } from 'lucide-react'
+import { Modal } from '../components/Modal'
+import { LoginForm } from '../components/LoginForm'
 
 const AppContext = createContext<{ session: Session | null; health: Health } | null>(null)
 export function useApp() {
@@ -23,6 +25,8 @@ export function useStudent() {
 export function AppRoot() {
   const health = useQuery({ queryKey: ['health'], queryFn: api.health, staleTime: Infinity, refetchInterval: query => query.state.status === 'error' ? 5000 : false })
   const session = useQuery({ ...sessionOptions, enabled: health.isSuccess })
+  const [reauth, setReauth] = useState(false)
+  useEffect(() => onSessionExpired(() => setReauth(true)), [])
   if (!health.data) {
     return (
       <main className="boot-screen">
@@ -41,7 +45,7 @@ export function AppRoot() {
   }
   if (session.isPending) return <LoadingState label="Restoring your session…" />
   if (session.isError) return <main className="mx-auto max-w-2xl p-8"><Brand /><div className="mt-12"><ErrorState error={session.error} retry={() => void session.refetch()} /></div></main>
-  return <AppContext.Provider value={{ session: session.data, health: health.data }}><Outlet /></AppContext.Provider>
+  return <AppContext.Provider value={{ session: session.data, health: health.data }}><Outlet />{reauth && session.data && <Modal title="Restore your student session"><p className="mb-6 text-sm leading-relaxed text-muted">Your session has expired. Sign in with the same student ID to continue. Your current work stays on the page.</p><LoginForm studentId={session.data.student.student_id} onSuccess={restored => { queryClient.setQueryData(['session'], restored); setReauth(false); void queryClient.invalidateQueries({ predicate: query => !['session', 'health'].includes(String(query.queryKey[0])) }); window.dispatchEvent(new Event('examos:session-restored')) }} /></Modal>}</AppContext.Provider>
 }
 
 export function RequireSession() {

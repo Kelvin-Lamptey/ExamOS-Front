@@ -3,5 +3,5 @@
   "identifier": "default",
   "description": "Student window with no filesystem, shell, or database access.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": ["core:default", "core:window:allow-destroy"]
 }

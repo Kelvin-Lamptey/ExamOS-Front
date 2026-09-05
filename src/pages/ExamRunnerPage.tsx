@@ -15,6 +15,7 @@ import { QuestionRenderer } from '../questions/QuestionRenderer'
 import { Modal } from '../components/Modal'
 import { LoginForm } from '../components/LoginForm'
 import { Utilities } from '../utilities/Utilities'
+import { useNativeClose } from '../app/useNativeClose'
 
 const questionLabels = { mcq: 'Multiple choice', short_text: 'Short answer', long_text: 'Written answer', number: 'Numeric answer', code: 'Code question' }
 
@@ -39,13 +40,14 @@ function ExamWorkspace({ exam }: { exam: ExamPackage }) {
   const [confirm, setConfirm] = useState(false)
   const [reauth, setReauth] = useState(false)
   const [navigationError, setNavigationError] = useState<unknown>(null)
+  const closing = useNativeClose(controller, setNavigationError)
   const status = useSystemStatus()
   const heading = useRef<HTMLHeadingElement>(null)
   const question = questions[index]!
   const draft = snapshot.answers[question.id]!
   const answered = questions.filter(question => !snapshot.answers[question.id]!.invalid && isAnswered(snapshot.answers[question.id]!.response)).length
   const requiredMissing = questions.filter(question => question.required && (snapshot.answers[question.id]!.invalid || !isAnswered(snapshot.answers[question.id]!.response))).length
-  const frozen = controller.isFrozen()
+  const frozen = controller.isFrozen() || closing
   const blocker = useBlocker(useCallback(({ currentLocation, nextLocation }) => currentLocation.pathname !== nextLocation.pathname && !controller.getSnapshot().submission?.local_locked && (controller.getSnapshot().dirty || controller.getSnapshot().saving || controller.getSnapshot().submissionUncertain || controller.getSnapshot().submitting), [controller]))
 
   useEffect(() => {
@@ -65,12 +67,14 @@ function ExamWorkspace({ exam }: { exam: ExamPackage }) {
       }
     }
     const visibility = () => { if (document.visibilityState === 'hidden') void controller.flush(true).catch(() => undefined) }
+    const restored = () => { void controller.flush().catch(() => undefined) }
     window.addEventListener('beforeunload', beforeUnload)
+    window.addEventListener('examos:session-restored', restored)
     document.addEventListener('visibilitychange', visibility)
     const timer = setInterval(() => {
       if (!controller.getSnapshot().saving && !controller.getSnapshot().submitting) void controller.reconcile().catch(() => undefined)
     }, 10_000)
-    return () => { window.removeEventListener('beforeunload', beforeUnload); document.removeEventListener('visibilitychange', visibility); clearInterval(timer); controller.dispose() }
+    return () => { window.removeEventListener('beforeunload', beforeUnload); window.removeEventListener('examos:session-restored', restored); document.removeEventListener('visibilitychange', visibility); clearInterval(timer); controller.dispose() }
   }, [controller])
 
   useEffect(() => {
