@@ -26,8 +26,17 @@ const StoreSchema = z.object({
 type Store = z.infer<typeof StoreSchema>
 
 class HttpError extends Error {
-  constructor(public status: number, public code: string, message: string, public retryable = false, public currentRevision?: number) {
+  status: number
+  code: string
+  retryable: boolean
+  currentRevision?: number
+
+  constructor(status: number, code: string, message: string, retryable = false, currentRevision?: number) {
     super(message)
+    this.status = status
+    this.code = code
+    this.retryable = retryable
+    this.currentRevision = currentRevision
   }
 }
 
