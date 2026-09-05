@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist Variable', Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', monospace;
+  --color-ink: #07121f;
+  --color-deep: #040a12;
+  --color-surface: #0c1b2c;
+  --color-raised: #11253a;
+  --color-line: #accce22e;
+  --color-paper: #f1f7fb;
+  --color-muted: #a9bdcc;
+  --color-blue: #5aa8e8;
+  --color-accent: #b7dcf7;
+}
+
+:root { color-scheme: dark; }
+body { margin: 0; background: var(--color-deep); color: var(--color-paper); font-family: var(--font-sans); }
+button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+::selection { background: #5aa8e855; color: #fff; }
+.eyebrow { color: var(--color-accent); font-family: var(--font-mono); letter-spacing: .13em; font-size: 11px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
