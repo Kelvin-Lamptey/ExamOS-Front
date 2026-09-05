@@ -4,6 +4,9 @@ import { AppShell } from '../components/AppShell'
 import { LoginPage } from '../pages/LoginPage'
 import { HomePage } from '../pages/HomePage'
 import { ErrorState } from '../components/Feedback'
+import { ExamOverviewPage } from '../pages/ExamOverviewPage'
+import { ExamRunnerPage } from '../pages/ExamRunnerPage'
+import { SubmittedPage } from '../pages/SubmittedPage'
 
 export const router = createHashRouter([
   {
@@ -14,6 +17,9 @@ export const router = createHashRouter([
       { Component: RequireSession, children: [
         { Component: AppShell, children: [
           { index: true, Component: HomePage },
+          { path: '/exams/:examId', Component: ExamOverviewPage },
+          { path: '/exams/:examId/run', Component: ExamRunnerPage },
+          { path: '/exams/:examId/submitted', Component: SubmittedPage },
           { path: '*', element: <ErrorState title="Page not found" error={new Error('Use My exams to return to your workspace.')} /> },
         ] },
       ] },

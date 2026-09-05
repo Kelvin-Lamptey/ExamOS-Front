@@ -49,7 +49,35 @@ button:disabled { cursor: not-allowed; }
   .filter-tabs button { @apply rounded-full px-4 py-2 text-xs text-muted; }
   .filter-tabs button[aria-pressed='true'] { @apply bg-raised text-accent; }
   .stat-number { @apply font-mono text-2xl font-medium tracking-tight text-paper; }
+  .back-link { @apply inline-flex items-center gap-2 text-xs text-muted transition-colors hover:text-accent; }
+  .modal { @apply fixed m-auto w-[calc(100%-32px)] max-w-lg rounded-2xl border border-line bg-surface p-7 text-paper shadow-2xl; max-height: calc(100dvh - 48px); overflow-y: auto; }
+  .modal-wide { @apply max-w-2xl; }
+  .modal::backdrop { background: #02070ec9; backdrop-filter: blur(5px); }
+  .runner-topbar { @apply flex items-center justify-between gap-5 border-b border-line bg-ink/50 px-8 py-5; }
+  .exam-timer { @apply flex shrink-0 items-center gap-3 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-accent; }
+  .timer-warning { @apply border-amber-200/30 bg-amber-200/5 text-amber-200; }
+  .exam-sidebar { @apply flex flex-col border-r border-line bg-ink/30 p-7; }
+  .question-workspace { @apply mx-auto w-full min-w-0 max-w-5xl p-8 lg:px-12; }
+  .question-card { @apply rounded-2xl border border-line bg-surface p-7 sm:p-9; }
+  .question-prompt { @apply text-xl leading-relaxed font-medium tracking-[-0.025em] whitespace-pre-wrap sm:text-[22px]; }
+  .question-nav-button { @apply relative flex aspect-square items-center justify-center rounded-lg border border-line bg-surface font-mono text-xs text-muted transition-colors hover:border-accent/50 disabled:opacity-50; }
+  .question-nav-button.answered { @apply border-accent/25 bg-accent/10 text-accent; }
+  .question-nav-button.current { @apply border-accent bg-accent text-ink; }
+  .mcq-option { @apply flex cursor-pointer items-center gap-4 rounded-xl border border-line bg-ink/30 p-4 transition-colors hover:border-accent/35; }
+  .mcq-option:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .mcq-option:has(input:disabled) { cursor: not-allowed; opacity: .65; }
+  .mcq-selected { @apply border-accent/50 bg-accent/6; }
+  .mcq-letter { @apply grid size-8 shrink-0 place-items-center rounded-lg border border-line font-mono text-xs text-muted; }
+  .mcq-selected .mcq-letter { @apply border-accent/25 bg-accent/10 text-accent; }
+  .mcq-radio { @apply size-4 shrink-0 rounded-full border border-muted/40; }
+  .mcq-selected .mcq-radio { border: 4px solid var(--color-accent); background: var(--color-ink); }
+  .runner-bottom-bar { @apply flex items-center justify-between gap-4 border-t border-line bg-ink px-8 py-4; }
+  .submission-check { @apply grid size-24 place-items-center rounded-full border border-accent/30 bg-accent/8 text-accent; box-shadow: 0 0 0 12px #b7dcf704, 0 0 0 24px #b7dcf703; }
 }
+.exam-layout { display: grid; grid-template-columns: 255px minmax(0, 1fr); min-height: calc(100dvh - 278px); }
+.question-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 900px) { .exam-layout { grid-template-columns: 200px minmax(0, 1fr); } .exam-sidebar { padding: 22px 18px; } .question-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .question-workspace { padding: 24px; } }
+@media (max-width: 650px) { .exam-layout { grid-template-columns: 1fr; } .exam-sidebar { border-right: 0; border-bottom: 1px solid var(--color-line); } .question-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; margin-top: 15px; } .exam-sidebar > div:last-child { display: none; } .question-workspace { padding: 20px 16px; } .runner-topbar { padding: 20px 16px; } .exam-timer { gap: 8px; padding: 10px; } .runner-topbar h1 { max-width: 30vw; } .runner-bottom-bar { padding: 16px; } }
 .app-shell { display: grid; min-height: 100dvh; grid-template-columns: 220px minmax(0, 1fr); grid-template-rows: 88px 1fr; grid-template-areas: 'header header' 'sidebar main'; }
 .runner-shell { grid-template-columns: 1fr; grid-template-areas: 'header' 'main'; }
 .runner-main { grid-area: main; min-width: 0; }
