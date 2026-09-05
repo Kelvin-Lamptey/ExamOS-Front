@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarDays, Cloud, LogOut, RefreshCw } from 'lucide-react'
-import { useApp, useStudent } from '../app/AppRoot'
+import { useStudent } from '../app/AppRoot'
 import { api } from '../api/client'
-import { examsOptions, queryClient, useSystemStatus } from '../state/queries'
+import { examsOptions, replaceSession, useSystemStatus } from '../state/queries'
 import { ExamCard } from '../components/ExamCard'
 import { ErrorState, LoadingState } from '../components/Feedback'
 import { SyncIndicator } from '../components/SyncIndicator'
@@ -11,7 +11,6 @@ import { Utilities } from '../utilities/Utilities'
 
 export function HomePage() {
   const student = useStudent()
-  const { health } = useApp()
   const exams = useQuery({ ...examsOptions, refetchInterval: 15_000 })
   const status = useSystemStatus()
   const [logoutError, setLogoutError] = useState<unknown>(null)
@@ -22,7 +21,7 @@ export function HomePage() {
   const visible = exams.data?.filter(exam => filter === 'all' || (filter === 'submitted' ? exam.status === 'submitted' : ['available', 'in_progress'].includes(exam.status)))
   async function logout() {
     setLoggingOut(true); setLogoutError(null)
-    try { await api.logout(); queryClient.clear(); queryClient.setQueryData(['health'], health); queryClient.setQueryData(['session'], null) }
+    try { await api.logout(); replaceSession(null) }
     catch (error) { setLogoutError(error) }
     finally { setLoggingOut(false) }
   }
